@@ -1,4 +1,3 @@
-
 def size():
     pass
 
@@ -33,7 +32,7 @@ class not_expr(expr):
         assert(isinstance(e, expr))
 
 class val(expr):
-    def __init(self, val):
+    def __init__(self, val):
         assert(val is True or val is False)
         self.val = val
 
