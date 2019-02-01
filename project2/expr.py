@@ -1,8 +1,22 @@
-def size():
-    pass
+def size(e):
+    if type(e) is binary_expr:
+        return 1 + size(e.lhs) + size(e.rhs)
+    if type(e) is not_expr:
+        return 1 + size(e.expr)
+    if type(e) is val:
+        return 1
 
-def height():
-    pass
+def height(e):
+    if type(e) is binary_expr:
+        lhs = height(e.lhs)
+        rhs = height(e.rhs)
+        if lhs > rhs:
+            return 1 + lhs
+        return 1 + rhs
+    if type(e) is not_expr:
+        return 1 + height(e.expr)
+    if type(e) is val:
+        return 1
 
 def same():
     pass
@@ -30,6 +44,7 @@ class binary_expr(expr):
 class not_expr(expr):
     def __init__(self, e):
         assert(isinstance(e, expr))
+        self.expr = e
 
 class val(expr):
     def __init__(self, val):
