@@ -22,7 +22,8 @@ expr0 = binary_expr(
         )
     )
 )
-assert(height(expr0) == 7)
+assert(height(expr0) is 7)
+assert(value(expr0) is False)
 
 expr1 = binary_expr(
     binary_expr(
@@ -50,6 +51,7 @@ expr2 = not_expr(
     )
 )
 assert(size(expr2) == 3)
+assert(value(expr2) is False)
 
 expr3 = binary_expr(
     val(True),
@@ -57,6 +59,7 @@ expr3 = binary_expr(
         val(False)
     )
 )
-assert(size(expr3) == 4)
+assert(height(expr3) == 3)
+assert(value(expr3) is True)
 
 
