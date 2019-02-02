@@ -63,3 +63,4 @@ assert(height(expr3) == 3)
 assert(value(expr3) is True)
 
 
+print(get_children(expr3))
