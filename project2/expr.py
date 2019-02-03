@@ -45,38 +45,62 @@ def get_children(e):
     return []
     ## for serialize tree
 
-def serialize_tree(tree):
+# Returns a list of nodes in post-order
+def serialize_tree(tree, flat):
     children = get_children(tree)
     for node in children:  
-        print(serialize_tree(node))
-    print([tree])
+        flat = serialize_tree(node, flat)
+    flat.append(tree)
+    return flat
+
+# Creates a tree from a list of nodes in reverse post-order
+def reconstruct_tree(post_order):
+    stack = Stack(post_order[::-1])
+    stack2 = Stack()
+    while not stack.empty():
+        item = stack.pop()
+        if type(item) is not val:
+            if type(item) is not_expr:
+                item = not_expr(stack2.pop())
+            elif type(item) is binary_expr:
+                item = binary_expr(stack2.pop(), stack2.pop(), item.op)
+        stack2.push(item)
+    return stack2.top()
 
 def step(expr):
-    z = serialize_tree(expr)
-    print(z)
-    return 2
-    """
-    e = expr
+    post_order = serialize_tree(expr, [])
+    assert(len(post_order) > 1)
     stack = Stack()
-    children = list_iterator(get_children(e))
 
-    while children.current() != None or stack.empty() != False:
-        while children.current() != None:
-            stack.push(children.current())
-            children.next()
+    for item in post_order[:]:
+        post_order.pop(0)
 
-        children = list_iterator(get_children(stack.top()))
+        if type(item) is val:
+            stack.push(item)
+            continue
 
-        print(children.current())
-        children.next()
-    
-    return e
-    """
+        if type(item) is binary_expr:
+            rhs = stack.pop()
+            lhs = stack.pop()
+            new_item = val(value(binary_expr(lhs, rhs, item.op)))
 
+        elif type(item) is not_expr:
+            tf = stack.pop()
+            new_item = val(value(not_expr(tf)))
+        
+        stack.push(new_item)
 
+        while not stack.empty():
+            post_order = [stack.pop()] + post_order
 
-def step_reduce():
-    pass
+        break
+
+    return reconstruct_tree(post_order)
+
+def step_reduce(expr):
+    while type(expr) is not val:
+        expr = step(expr)
+    return expr
 
 class list_iterator():
     def __init__(self, vals):
@@ -111,15 +135,20 @@ class Queue():
 
 class Stack():
     def __init__(self, vals=[]):
-        self._list = list(vals)
+        self._list = []
         self._top = None
+        self._size = 0
+        for item in list(vals):
+            self.push(item)
 
     def push(self, val):
         self._list.append(val)
         self._top = self._list[-1]
+        self._size += 1
 
     def pop(self):
         assert(len(self._list) != 0)
+        self._size -= 1
         return self._list.pop()
 
     def top(self):
@@ -130,6 +159,9 @@ class Stack():
         if len(self._list) == 0:
             return True
         return False
+
+    def size(self):
+        return len(self._list)
     
 class logical_op(Enum):
     _or = auto()
@@ -179,13 +211,26 @@ class val(expr):
 
 if __name__ == '__main__':
 
-    
     e = binary_expr(
-        not_expr(val(False)),
         binary_expr(
+            not_expr(
+                not_expr(
+                    val(True)
+                )
+            ),
+            not_expr(
+                not_expr(
+                    val(True)
+                )
+            )
+        ),
+        binary_expr(
+            val(True),
             val(False),
-            val(True)
+            logical_op._or
         )
     )
 
+    e = not_expr(val(False))
+    e = step_reduce(e)
     print(e.to_string())
