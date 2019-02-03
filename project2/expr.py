@@ -47,8 +47,9 @@ def get_children(e):
 
 def serialize_tree(tree):
     children = get_children(tree)
-    for node in children:
-        serialize_tree(node)
+    for node in children:  
+        print(serialize_tree(node))
+    print([tree])
 
 def step(expr):
     z = serialize_tree(expr)
@@ -133,10 +134,19 @@ class Stack():
 class logical_op(Enum):
     _or = auto()
     _and = auto()
+    @classmethod
+    def to_string(cls, val):
+        if val == logical_op._or:
+            return 'OR'
+        elif val == logical_op._and:
+            return 'AND'
+        raise ValueError
 
 class expr():
     def __init__(self):
         pass
+    def to_string(self):
+        raise NotImplementedError
 
 class binary_expr(expr):
     # op given default argument of logical and so I don't have to 
@@ -148,15 +158,24 @@ class binary_expr(expr):
         self.rhs = rhs
         self.op = op
 
+    def to_string(self):
+        return f"{self.lhs.to_string()} {logical_op.to_string(self.op)} {self.rhs.to_string()}"
+
 class not_expr(expr):
     def __init__(self, e):
         assert(isinstance(e, expr))
         self.expr = e
+    
+    def to_string(self):
+        return f"NOT {self.expr.to_string()}"
 
 class val(expr):
     def __init__(self, val):
         assert(val == True or val == False)
         self.val = val
+
+    def to_string(self):
+        return f"{self.val}"
 
 if __name__ == '__main__':
 
@@ -169,4 +188,4 @@ if __name__ == '__main__':
         )
     )
 
-    e = step(e)
+    print(e.to_string())
