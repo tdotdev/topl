@@ -1,6 +1,5 @@
 from enum import Enum, auto
 
-
 def size(e):
     if type(e) == binary_expr:
         return 1 + size(e.lhs) + size(e.rhs)
@@ -43,7 +42,6 @@ def get_children(e):
     if type(e) is value:
         return [e.val]
     return []
-    ## for serialize tree
 
 # Returns a list of nodes in post-order
 def serialize_tree(tree, flat):
@@ -89,10 +87,8 @@ def step(expr):
             new_item = val(value(not_expr(tf)))
         
         stack.push(new_item)
-
         while not stack.empty():
             post_order = [stack.pop()] + post_order
-
         break
 
     return reconstruct_tree(post_order)
@@ -182,7 +178,7 @@ class expr():
 
 class binary_expr(expr):
     # op given default argument of logical and so I don't have to 
-    # retroactively add an operator to all of my test cases :D
+    # retroactively add an operator to all of my test cases
     def __init__(self, lhs, rhs, op=logical_op._and):
         assert(isinstance(lhs, expr))
         assert(isinstance(rhs, expr))
@@ -210,27 +206,4 @@ class val(expr):
         return f"{self.val}"
 
 if __name__ == '__main__':
-
-    e = binary_expr(
-        binary_expr(
-            not_expr(
-                not_expr(
-                    val(True)
-                )
-            ),
-            not_expr(
-                not_expr(
-                    val(True)
-                )
-            )
-        ),
-        binary_expr(
-            val(True),
-            val(False),
-            logical_op._or
-        )
-    )
-
-    e = not_expr(val(False))
-    e = step_reduce(e)
-    print(e.to_string())
+    pass
