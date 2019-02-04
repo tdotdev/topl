@@ -20,8 +20,17 @@ def height(e):
     if type(e) == val:
         return 1
 
-def same():
-    pass
+def same(expr1, expr2):
+    e1_post = serialize_tree(expr1, [])
+    e2_post = serialize_tree(expr2, [])
+    for (e1, e2) in zip(e1_post, e2_post):
+        t1 = type(e1)
+        t2 = type(e2)
+        if t1 != t2:
+            return False
+        if t1 == binary_expr and e1.op != e2.op:
+            return False
+    return True
 
 def value(e):
     if type(e) == binary_expr:
@@ -206,4 +215,7 @@ class val(expr):
         return f"{self.val}"
 
 if __name__ == '__main__':
+    e1 = binary_expr(val(True), val(False), logical_op._and)
+    e2 = binary_expr(val(True), val(False), logical_op._and)
+    print(same(e1,e2))
     pass

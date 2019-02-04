@@ -67,3 +67,5 @@ expr3 = binary_expr(
 assert(height(expr3) == 3)
 assert(value(expr3) == True)
 assert(step_reduce(expr3).val == True)
+
+print('All tests passed.')
